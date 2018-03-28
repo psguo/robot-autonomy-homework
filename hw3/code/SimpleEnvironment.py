@@ -20,34 +20,61 @@ class SimpleEnvironment(object):
                                   [ 0, 0,  0, 1]])
         table.SetTransform(table_pose)
 
+        self.env = self.robot.GetEnv()
+
+    def CheckConfigCollision(self, config):
+
+        t = self.robot.GetTransform()
+        t[:2,3] = numpy.array(config)
+        self.robot.SetTransform(t)
+        return self.env.CheckCollision(self.robot)
+
     def GetSuccessors(self, node_id):
 
         successors = []
 
-        # TODO: Here you will implement a function that looks
         #  up the configuration associated with the particular node_id
         #  and return a list of node_ids that represent the neighboring
         #  nodes
-        
+
+        coord = self.discrete_env.NodeIdToGridCoord(node_id)
+        current_config = self.discrete_env.NodeIdToConfiguration(node_id)
+        for idx in range(self.discrete_env.dimension):
+            if coord[idx] - 1 >= 0:
+                neighbor_coord = coord[:]
+                neighbor_coord[idx] -= 1
+                neighbor_config = self.discrete_env.GridCoordToConfiguration(neighbor_coord)
+                if not self.CheckConfigCollision(neighbor_config):
+                    successors.append(self.discrete_env.GridCoordToNodeId(neighbor_coord))
+                    # self.PlotEdge(current_config, neighbor_config)
+            if coord[idx] + 1 <= self.discrete_env.num_cells[idx] - 1:
+                neighbor_coord = coord[:]
+                neighbor_coord[idx] += 1
+                neighbor_config = self.discrete_env.GridCoordToConfiguration(neighbor_coord)
+                if not self.CheckConfigCollision(neighbor_config):
+                    successors.append(self.discrete_env.GridCoordToNodeId(neighbor_coord))
+                    # self.PlotEdge(current_config, neighbor_config)
+
         return successors
 
     def ComputeDistance(self, start_id, end_id):
 
-        dist = 0
-
-        # TODO: Here you will implement a function that 
         # computes the distance between the configurations given
         # by the two node ids
+
+        start_config = numpy.array(self.discrete_env.NodeIdToConfiguration(start_id))
+        end_config = numpy.array(self.discrete_env.NodeIdToConfiguration(end_id))
+
+        dist = numpy.linalg.norm(end_config-start_config)
 
         return dist
 
     def ComputeHeuristicCost(self, start_id, goal_id):
-        
-        cost = 0
 
-        # TODO: Here you will implement a function that 
+        # TODO: Here you will implement a function that
         # computes the heuristic cost between the configurations
         # given by the two node ids
+        cost = self.ComputeDistance(start_id, goal_id)
 
         return cost
 
