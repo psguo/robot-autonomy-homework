@@ -70,7 +70,6 @@ class SimpleEnvironment(object):
 
     def ComputeHeuristicCost(self, start_id, goal_id):
 
-        # TODO: Here you will implement a function that
         # computes the heuristic cost between the configurations
         # given by the two node ids
         cost = self.ComputeDistance(start_id, goal_id)

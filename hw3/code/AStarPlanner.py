@@ -17,14 +17,17 @@ class AStarPlanner(object):
         start_node_id = self.planning_env.discrete_env.ConfigurationToNodeId(start_config)
         goal_node_id = self.planning_env.discrete_env.ConfigurationToNodeId(goal_config)
 
-        visited_nodes_cost = [-1] * self.planning_env.discrete_env.NodesNumber()
-        visited_nodes_parents = [0] * self.planning_env.discrete_env.NodesNumber()
+        visited_nodes_cost = {}
+        visited_nodes_parents = {}
+
+        # visited_nodes_cost = [-1] * self.planning_env.discrete_env.NodesNumber()
+        # visited_nodes_parents = [0] * self.planning_env.discrete_env.NodesNumber()
 
         visited_nodes_cost[start_node_id] = 0  # stands for starting node's cost
         visited_nodes_parents[start_node_id] = -1 # stands for starting node's parent is none
 
         traversed_nodes = [start_node_id]
-        print(self.planning_env.discrete_env.NodeIdToGridCoord(start_node_id))
+
         # 1. Traverse
         while True:
             # 1.1 Find all reachable node's cost
@@ -33,7 +36,7 @@ class AStarPlanner(object):
             for current_node in traversed_nodes:
                 successors = self.planning_env.GetSuccessors(current_node)
                 for successor in successors:
-                    if visited_nodes_parents[successor] == 0: # not visited nodes
+                    if successor not in visited_nodes_parents: # not visited nodes
                         successor_cost = visited_nodes_cost[current_node] + 1 + self.planning_env.ComputeHeuristicCost(successor, goal_node_id)
                         if successor in all_successors_cost:
                             if successor_cost < all_successors_cost[successor]:

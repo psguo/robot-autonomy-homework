@@ -19,9 +19,12 @@ class BreadthFirstPlanner(object):
         goal_node_id = self.planning_env.discrete_env.ConfigurationToNodeId(goal_config)
 
         queue = [start_node_id]
-        visited_nodes = [0] * self.planning_env.discrete_env.NodesNumber()
 
-        visited_nodes[start_node_id] = -1  # stands for starting node's parent is none
+        visited_nodes = {}
+
+        # visited_nodes = [0] * self.planning_env.discrete_env.NodesNumber()
+        #
+        # visited_nodes[start_node_id] = -1  # stands for starting node's parent is none
 
         # 1. Traverse
         while len(queue) > 0:
@@ -30,7 +33,7 @@ class BreadthFirstPlanner(object):
                 break
             successors = self.planning_env.GetSuccessors(current_node)
             for successor in successors:
-                if visited_nodes[successor] == 0:
+                if successor not in visited_nodes:
                     visited_nodes[successor] = current_node
                     queue.append(successor)
 
