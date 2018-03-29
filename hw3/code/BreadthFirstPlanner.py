@@ -34,6 +34,10 @@ class BreadthFirstPlanner(object):
                     visited_nodes[successor] = current_node
                     queue.append(successor)
 
+                    if self.visualize:
+                        self.planning_env.PlotEdge(self.planning_env.discrete_env.NodeIdToConfiguration(current_node),
+                                                    self.planning_env.discrete_env.NodeIdToConfiguration(successor))
+
         # 2. Find the path
         plan_nodes = [goal_node_id]
         current_node = goal_node_id

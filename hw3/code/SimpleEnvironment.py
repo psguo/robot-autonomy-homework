@@ -21,6 +21,7 @@ class SimpleEnvironment(object):
         table.SetTransform(table_pose)
 
         self.env = self.robot.GetEnv()
+        self.resolution = resolution
 
     def CheckConfigCollision(self, config):
 
@@ -46,14 +47,12 @@ class SimpleEnvironment(object):
                 neighbor_config = self.discrete_env.GridCoordToConfiguration(neighbor_coord)
                 if not self.CheckConfigCollision(neighbor_config):
                     successors.append(self.discrete_env.GridCoordToNodeId(neighbor_coord))
-                    # self.PlotEdge(current_config, neighbor_config)
             if coord[idx] + 1 <= self.discrete_env.num_cells[idx] - 1:
                 neighbor_coord = coord[:]
                 neighbor_coord[idx] += 1
                 neighbor_config = self.discrete_env.GridCoordToConfiguration(neighbor_coord)
                 if not self.CheckConfigCollision(neighbor_config):
                     successors.append(self.discrete_env.GridCoordToNodeId(neighbor_coord))
-                    # self.PlotEdge(current_config, neighbor_config)
 
         return successors
 
@@ -62,11 +61,11 @@ class SimpleEnvironment(object):
         # computes the distance between the configurations given
         # by the two node ids
 
-        start_config = numpy.array(self.discrete_env.NodeIdToConfiguration(start_id))
-        end_config = numpy.array(self.discrete_env.NodeIdToConfiguration(end_id))
+        start_config = numpy.array(self.discrete_env.NodeIdToGridCoord(start_id))
+        end_config = numpy.array(self.discrete_env.NodeIdToGridCoord(end_id))
+
 
         dist = numpy.linalg.norm(end_config-start_config)
-
         return dist
 
     def ComputeHeuristicCost(self, start_id, goal_id):
